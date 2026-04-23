@@ -2,8 +2,8 @@ name: Auto PR into dev with auto-merge
 
 on:
   push:
-    branches-ignore:
-      - dev  # avoid infinite loop
+    branches:
+      - main   # lebih jelas daripada ignore
 
 permissions:
   contents: write
@@ -16,24 +16,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get current branch name
-        id: get_branch
-        run: echo "branch_name=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
-
-      - name: Create Pull Request from dynamic branch to dev
+      - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          branch: auto-pr
           base: dev
-          head: ${{ steps.get_branch.outputs.branch_name }}
-          title: "🔁 Sync: ${{ steps.get_branch.outputs.branch_name }} → dev"
-          body: |
-            This PR auto-syncs `${{ steps.get_branch.outputs.branch_name }}` → `dev`
-          draft: false
+          title: "🔁 Sync main → dev"
+          body: "Auto sync from main to dev"
           delete-branch: false
 
       - name: Auto-merge the PR
@@ -41,6 +33,4 @@ jobs:
         uses: pascalgn/automerge-action@v0.16.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MERGE_LABELS: ""
           MERGE_METHOD: merge
-          MERGE_COMMIT_MESSAGE: pull-request-title
