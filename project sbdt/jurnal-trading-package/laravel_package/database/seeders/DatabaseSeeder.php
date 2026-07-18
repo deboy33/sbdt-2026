@@ -1,0 +1,19 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+
+class DatabaseSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $this->call([
+            TradeSeeder::class,
+            EquitySnapshotSeeder::class,
+            ChecklistSeeder::class,
+            PrincipleSeeder::class,
+            TraderSettingSeeder::class,
+        ]);
+    }
+}
