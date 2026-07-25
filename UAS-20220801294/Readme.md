@@ -1,124 +1,49 @@
-## 📊 GitHub Repository Stats
+# Implementasi Sistem Basis Data Terdistribusi dengan Replikasi Master-Slave dan Dashboard Monitoring Berbasis Web untuk Jurnal Trading
 
-| 📈 Metric                      | 🔢 Value |
-|-------------------------------|----------|
-| 🧲 Total Clones (14 days)     | <!--CLONE_COUNT--> null 
-| 👤 Unique Visitors (14 days)  | <!--UNIQUE_CLONE--> null 
-| 👀 Total Views (14 days)      | <!--VIEW_COUNT--> null 
-| 🧍 Unique Viewers (14 days)   | <!--UNIQUE_VIEWS--> null 
-| ⭐ Stars                       | <!--STARS--> null 
-| 🍴 Forks                      | <!--FORKS--> null 
-| 🕒 Last Updated               | <!--LAST_UPDATED--> 2026-07-18 01:43:21 UTC 
+**Nama:** Deby Hendri Yarto
+**NIM:** 20220801294
+**Mata Kuliah:** Sistem Basis Data Terdistribusi (SBDT)
+**Program Studi:** Teknik Informatika, Fakultas Ilmu Komputer, Universitas Esa Unggul
 
+## Deskripsi
 
+Proyek ini mengimplementasikan sistem basis data terdistribusi dengan skema **replikasi Master-Slave** secara asynchronous menggunakan MySQL yang dijalankan pada container **Docker**. Tujuannya adalah memisahkan beban tulis (write) pada server Master dan beban baca (read) pada server Slave, sehingga proses pencatatan transaksi tidak terganggu oleh query dashboard monitoring.
 
-# PERHATIAN HARAP DI BACA DENGAN CERMAT DAN TELITI
-# CONFIGURATION PROJECT
-## CROSSCHECK REQUIREMENT
-1. PASTIKAN WSL ANDA SUDAH ROOT
-```php
-whoami
-```
-2. INSTALL jq
-```php
-apt install jq -y
-```
+Studi kasus yang digunakan adalah aplikasi **Jurnal Trading**, dibangun menggunakan **Laravel** dengan panel admin **Filament**. Data transaksi dicatat melalui Master, direplikasi otomatis ke Slave, dan ditampilkan melalui dashboard monitoring yang membaca data khusus dari Slave.
 
-HASIL :
-❯ whoami
-root
+## Struktur Folder
 
-## SETUP AWAL
-1. BUKA GITHUB DAN AMBIL SETTING ATAU BISA COPY PASTE URL DIBAWAH INI
-```php
-    https://github.com/settings/tokens
 ```
-2. SELANJUTNYA AMBIL MENU PERSONAL ACCESS TOKEN (MASIH DIDALAM SETTING GITHUB)
-3. PILIH MENU TOKEN (classic) dan GENERATE NEW TOKEN PILIHANNYA GENERATE TOKEN CLASSIC !!!
-4. ISI NOTE DENGAN INITSCRIPT
-5. SET EXPIRATION TO NO EXPIRATION
-6. CENTANG SEMUA REPO, USER DAN DELETE_REPO
-7. BUAT FILE DIDALAM BOILERPLATE DENGAN NAMA ".github-user dan .github-token" ATAU BISA COPY PASTE CMD DIBAWAH INI DI DALAM BOILERPLATE
-```php
-touch .github-token
-```
-```php
-touch .github-user
-```
-8. DI DALAM FILE .github-token PASTE TOKEN YANG TELAH DI GENERATE TADI
-9. DI DALAM FILE .github-user KETIKKAN USER GITHUB ANDA
-
-## SETUP KEDUA DI DALAM POWERSHELL DENGAN RUN ADMINISTRATOR
-1. LAKUKAN DI POWERSHELL DENGAN RUN AS ADMINISTRATOR
-```php
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-```
-2. MASIH DI POWERSHELL DENGAN RUN AS ADMINISTRATOR
-```php
-choco install mkcert
-```
-3. MASIH DI POWERSHELL DENGAN RUN AS ADMINISTRATOR
-```php
-mkcert -install
-```
-4. RESTART LAPTOP KALIAN
-
-### JIKA ERROR TIDAK BISA INSTALL COBA LANGKAH INI MASIH DILAKUKAN DENGAN POWERSHELL RUN AS ADMINISTRATOR
-#### SATU
-```php
-Set-ExecutionPolicy Bypass -Scope Process -Force; `
-[System.IO.Directory]::Delete("$env:ProgramData\chocolatey", $true)
+UAS-20220801294/
+├── docs/     → Laporan_SBDT_Jurnal_Trading.pdf (laporan lengkap implementasi)
+├── ppt/      → Presentasi_Final_SBDT_Deby.pptx (bahan presentasi)
+├── src/      → Source code aplikasi & konfigurasi Docker
+│   ├── db/         (konfigurasi MySQL Master-Slave, my.cnf)
+│   ├── nginx/      (konfigurasi web server)
+│   ├── php/        (konfigurasi PHP-FPM)
+│   ├── src/         (source code Laravel + Filament)
+│   └── docker-compose.yml
+└── Readme.md
 ```
 
-#### DUA
-```php
-$envPath = [Environment]::GetEnvironmentVariable("Path", [EnvironmentVariableTarget]::Machine)
-$newPath = ($envPath -split ";") -ne "C:\ProgramData\chocolatey\bin" -join ";"
-[Environment]::SetEnvironmentVariable("Path", $newPath, [EnvironmentVariableTarget]::Machine)
+## Cara Menjalankan
+
+```bash
+cd src
+docker compose up -d
 ```
 
-## UNTUK MEMULAI SILAHKAN LAKUKAN PERINTAH BERIKUT INI 
-### EKSEKUSI PERINTAH SETUP
-### MISALNYA NAMA PROJECT NYA ADALAH PEMWEB 
-```php
-./start.sh pemweb
+Setelah container berjalan, aplikasi dapat diakses melalui browser, dan status replikasi dapat diverifikasi dengan:
+
+```bash
+docker exec -it db_master mysql -u root -p -e "SHOW MASTER STATUS\G"
+docker exec -it db_slave mysql -u root -p -e "SHOW SLAVE STATUS\G"
 ```
-## SETUP TERAKHIR DIDALAM TERMINAL WSL
-1. SETELAH SELESAI SEMUA BISA LAKUKAN SOURCE ULANG ZSHRC ATAU BISA COPY PASTE CMD DIBAWAH INI
-```php
-source /root/.zshrc
-```
-2. AKAN ADA TAMBAHAN PERINTAH SEPERTI
-- dcu untuk docker-compose up -d
-```php
-dcu
-```
-- dcd untuk docker-compose down
-```php
-dcd
-```
-- dcm untuk create model, controller, seeder, migration, filament resource
-```php
-dcm Test
-```
-- dci untuk project init dimana sudah termasuk migrate, seed, fresh
-```php
-dci
-```
-- dcr untuk model, controller, seeder, migration, filament resource
-```php
-dcr Test
-```
-- dcp untuk git add, git commit dan git push
-```php
-dcp testing
-```
-- dca untuk php artisan
-```php
-dca make:middleware Testing
-```
-# UNTUK PENGGUNA MAC OS
-## BISA LANGSUNG EKSEKUSI
-```php
-./start_mac.sh
-```
+
+## Ringkasan Hasil
+
+- Replikasi Master-Slave berhasil menjaga konsistensi data secara otomatis antara kedua server.
+- Pemisahan beban read-write terbukti mengurangi beban komputasi pada server Master.
+- Dashboard monitoring berhasil menampilkan data real-time yang dibaca dari server Slave.
+
+Detail lengkap metodologi, arsitektur, implementasi, dan hasil pengujian dapat dilihat pada laporan di folder `docs/`.
